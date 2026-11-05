@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#6b55ad">
+<title>Mein Tausenderbuch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+:root{--ink:#30334a;--purple:#6b55ad;--pink:#f6a6c7;--blue:#bde8f7;--green:#ccefd5;--yellow:#ffe6a6}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 12% 0%,#fff 0,#f6f0ff 45%,#eaf7ff 100%);font-family:'Nunito','Trebuchet MS',system-ui,sans-serif;color:var(--ink)}
+header{text-align:center;padding:15px 10px 8px}
+h1{margin:0;color:#58428f;font-size:clamp(27px,3.5vw,39px);font-weight:900;letter-spacing:.2px}
+.subtitle{font-size:14px;color:#69718a;margin:3px 0 0;font-weight:700}
+main{max-width:1600px;margin:auto;padding:8px 12px 25px}
+.toolbar{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin-bottom:10px}
+button{font-family:inherit;touch-action:manipulation;cursor:pointer}
+.tool{border:0;border-radius:14px;padding:10px 15px;font-size:14px;font-weight:900;box-shadow:0 3px 0 #0002;transition:transform .15s}
+.tool:active{transform:translateY(2px)}
+.primary{background:#6b55ad;color:white}.soft{background:white;color:#59478e;border:1px solid #ddd5ef}
+.instructions{max-width:900px;margin:0 auto 10px;text-align:center;font-size:14px;line-height:1.4;color:#58627a;font-weight:700}
+.counter{max-width:450px;margin:0 auto 10px;padding:7px 12px;border:1px solid #e4dcef;border-radius:30px;background:#ffffffcf;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:900}
+.track{height:9px;flex:1;background:#ece8f4;border-radius:20px;overflow:hidden}.fill{height:100%;width:100%;background:linear-gradient(90deg,#62c8d8,#9a7cdb,#f49bc0);transition:width .3s}
+.book{background:linear-gradient(135deg,#a17b57,#795638);padding:9px;border-radius:17px;box-shadow:0 6px 0 #62452f,0 12px 24px #42304b25}
+.boards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.board{container-type:inline-size;min-width:0;background:#fffefa;border:2px solid #e5d9c9;border-radius:13px;padding:5px;box-shadow:0 3px 7px #35271720;animation:appear .35s both;transition:transform .2s}
+.boardhead{display:flex;justify-content:space-between;align-items:center;gap:3px;border-radius:9px;padding:5px 6px;margin-bottom:5px;min-height:31px}
+.board:nth-child(3n+1) .boardhead{background:#dff2ff}.board:nth-child(3n+2) .boardhead{background:#e3f6e7}.board:nth-child(3n) .boardhead{background:#fff0c9}
+.boardname{font-size:clamp(10px,1vw,14px);font-weight:900;white-space:nowrap}
+.pagebtn{border:1px solid #ffffffd9;border-radius:7px;background:#ffffffdf;color:#51446f;padding:5px 6px;font-size:clamp(8px,.8vw,11px);font-weight:900;white-space:nowrap}
+.grid{display:grid;grid-template-columns:22px repeat(10,minmax(0,1fr));grid-template-rows:repeat(10,minmax(0,1fr));aspect-ratio:1.08/1;gap:0}
+.rowbtn{border:0;border-bottom:1px solid #d7d1c6;background:#f3edff;color:#6650a4;font-size:clamp(7px,1.4cqi,16px);font-weight:900;padding:0;border-radius:4px 0 0 4px}
+.cell{min-width:0;min-height:0;border:0;border-right:1px solid #252525;border-bottom:1px solid #252525;background:#fff;color:#222;display:flex;align-items:center;justify-content:center;padding:0;margin:0;font-size:clamp(7px,2.5cqi,28px);font-weight:700;line-height:1;white-space:nowrap;overflow:hidden;letter-spacing:0;user-select:none;-webkit-user-select:none;touch-action:none}
+.cell.top{border-top:1px solid #252525}.cell.excluded{background:#fff;color:transparent;text-decoration:none}
+.board.folded{min-height:100px;background:#ead9c0;border-color:#8a6947;display:flex;flex-direction:column;justify-content:center}
+.board.folded .grid{display:none}.board.folded .boardhead{background:#fff0d8}
+.board.folded .pagebtn{background:#fff}
+.bookfoot{text-align:center;color:#fff5e8;padding:9px 3px 1px;font-size:13px;font-weight:900}
+.final{display:none;position:fixed;inset:0;background:#241b438f;z-index:10;align-items:center;justify-content:center;padding:18px}
+.final.show{display:flex;animation:fade .25s}
+.dialog{width:min(440px,100%);padding:25px 20px;border-radius:25px;text-align:center;background:linear-gradient(145deg,#fff9df,#ffe9f2 55%,#eee9ff);box-shadow:0 15px 50px #17102d55;animation:pop .45s}
+.dialog h2{margin:6px 0;color:#4f3c83;font-size:25px;font-weight:900}.secret{font-size:clamp(55px,13vw,82px);font-weight:900;color:#6952ad;margin:8px}
+.dialog .actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:14px}
+#reply{font-weight:800;font-size:14px}
+@keyframes appear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{0%{transform:scale(.8)}75%{transform:scale(1.04)}100%{transform:scale(1)}}
+@media(max-width:1050px){.boards{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.board{padding:3px}.boardhead{padding:3px 4px;min-height:27px}.boardname{font-size:clamp(8px,1.15vw,12px)}.pagebtn{font-size:clamp(7px,.85vw,10px);padding:4px 3px}.grid{grid-template-columns:15px repeat(10,minmax(0,1fr));aspect-ratio:1/1}.rowbtn{font-size:8px}.boardname{font-size:11px}.pagebtn{font-size:9px}.grid{grid-template-columns:19px repeat(10,minmax(0,1fr))}}
+
+@media(max-width:600px){main{padding-left:3px;padding-right:3px}.book{padding:4px}.boards{gap:3px}.board{padding:2px}.boardhead{gap:1px;padding:2px}.boardname{font-size:7px}.pagebtn{font-size:6px;padding:3px 2px}.grid{grid-template-columns:11px repeat(10,minmax(0,1fr))}.rowbtn{font-size:clamp(7px,1.4cqi,14px)}}
+
+/* Die sichtbaren Hundertertafeln nutzen den frei werdenden Platz */
+.boards{grid-template-columns:repeat(var(--cols,5),minmax(0,1fr));align-items:start}
+.board{width:100%}
+.boards.single .board{padding:7px;border-radius:13px;max-width:100%;}
+.boards.single .boardhead{padding:7px 8px;min-height:34px;margin-bottom:6px}
+.boards.single .boardname{font-size:clamp(12px,1.4vw,17px)}
+.boards.single .pagebtn{font-size:clamp(9px,1vw,12px);padding:5px 7px}
+.boards.single .grid{grid-template-columns:7% repeat(10,minmax(0,1fr));aspect-ratio:1/1;gap:0}
+.boards.single .rowbtn{font-size:clamp(8px,1.4cqi,16px)}
+.boards.single .cell{font-size:clamp(7px,2.5cqi,28px);letter-spacing:0}
+@media(max-width:1050px){
+ .boards{grid-template-columns:repeat(var(--cols,5),minmax(0,1fr))}
+ .boards.single .grid{grid-template-columns:7% repeat(10,minmax(0,1fr))}
+ .boards.single .cell{font-size:clamp(7px,2.5cqi,28px)}
+}
+@media(max-width:600px){
+ .boards{gap:4px}
+ .boards.single .board{padding:5px}
+ .boards.single .grid{grid-template-columns:7% repeat(10,minmax(0,1fr))}
+ .boards.single .cell{font-size:clamp(7px,2.5cqi,28px)}
+}
+
+</style>
+</head>
+<body>
+<header><h1>Mein Tausenderbuch</h1><p class="subtitle">🌟 Wir sind Zahlen-Detektive! 🌟</p></header>
+<main>
+<div class="toolbar">
+ <button class="tool primary" id="reset">🔄 Neues Buch</button>
+ <button class="tool soft" id="showpages">📖 Alle Seiten zeigen</button>
+ <button class="tool soft" id="shownumbers">✨ Alle Zahlen zeigen</button>
+</div>
+<p class="instructions">Ziehe mit dem Finger oder der Maus eine Linie über mehrere Zahlen. Sobald du loslässt, verschwinden alle berührten Zahlen! Tippe auf eine einzelne Zahl, um sie auszublenden oder wieder zu zeigen. Blende eine ganze Seite aus: Sie verschwindet ganz und die übrigen Seiten werden größer.</p>
+<div class="counter"><span id="count">1000 Zahlen sind noch möglich</span><div class="track"><div class="fill" id="fill"></div></div></div>
+<div class="book"><div class="boards" id="boards"></div><div class="bookfoot">📚 Weiter geht die Zahlen-Suche! 📚</div></div>
+</main>
+<div class="final" id="final">
+ <div class="dialog"><div style="font-size:39px">🎉 ⭐ 🎈</div><h2>Wir haben eine Zahl gefunden!</h2><div class="secret" id="secret"></div><h2>Ist das deine Zahl?</h2>
+ <div class="actions"><button class="tool primary" id="yes">Ja, richtig! 🎉</button><button class="tool soft" id="no">Nein, noch nicht.</button></div><p id="reply"></p></div>
+</div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id),excluded=new Set(),hiddenPages=new Set();
+let drawing=false,drawMode=false,touched=new Set(),suppressClick=false,showingFinal=false;
+function isPossible(n){return !excluded.has(n)&&!hiddenPages.has(Math.floor((n-1)/100))}
+function remaining(){let a=[];for(let n=1;n<=1000;n++)if(isPossible(n))a.push(n);return a}
+function paint(n,mode){if(touched.has(n))return;touched.add(n);if(mode)excluded.add(n);else excluded.delete(n);let el=$('boards').querySelector('[data-n="'+n+'"]');if(el){el.classList.toggle('excluded',excluded.has(n));el.textContent=excluded.has(n)?'':n}}
+function update(){
+ const left=remaining(),c=left.length;$('count').textContent=c+' von 1000 Zahlen sind noch möglich';$('fill').style.width=(c/1000*100)+'%';
+ if(c===1&&!showingFinal){showingFinal=true;$('secret').textContent=left[0];$('reply').textContent='';$('final').classList.add('show')}
+ if(c!==1){showingFinal=false;$('final').classList.remove('show')}
+}
+function render(){
+ const host=$('boards');host.innerHTML='';
+ const visiblePages=[];
+ for(let p=0;p<10;p++)if(!hiddenPages.has(p))visiblePages.push(p);
+ const count=visiblePages.length;
+ const cols=count>=9?5:count>=6?4:count>=3?3:2;
+ host.style.setProperty('--cols',cols);
+ host.classList.remove('single');
+ host.classList.toggle('empty',count===0);
+ for(const p of visiblePages){
+  const board=document.createElement('section');board.className='board';
+  const head=document.createElement('div');head.className='boardhead';
+  const title=document.createElement('span');title.className='boardname';title.textContent='📘 '+(p*100+1)+'–'+((p+1)*100);
+  const pageBtn=document.createElement('button');pageBtn.className='pagebtn';pageBtn.textContent='Seite ausblenden';
+  pageBtn.onclick=()=>{hiddenPages.add(p);render()};
+  head.append(title,pageBtn);board.append(head);
+  const grid=document.createElement('div');grid.className='grid';
+  for(let r=0;r<10;r++){
+   const rb=document.createElement('button');rb.className='rowbtn';rb.textContent='×';rb.title='Ganze Zahlenreihe ausblenden';rb.setAttribute('aria-label','Zahlen '+(p*100+r*10+1)+' bis '+(p*100+r*10+10)+' ausblenden');
+   rb.onclick=()=>{const nums=Array.from({length:10},(_,i)=>p*100+r*10+i+1),all=nums.every(n=>excluded.has(n));nums.forEach(n=>all?excluded.delete(n):excluded.add(n));render()};
+   grid.append(rb);
+   for(let col=0;col<10;col++){
+    const n=p*100+r*10+col+1,cell=document.createElement('button');cell.className='cell'+(excluded.has(n)?' excluded':'')+(r===0?' top':'');cell.dataset.n=n;cell.textContent=excluded.has(n)?'':n;
+    cell.addEventListener('pointerdown',e=>{e.preventDefault();drawing=true;suppressClick=true;touched=new Set();drawMode=!excluded.has(n);paint(n,drawMode)});
+    cell.addEventListener('pointerenter',()=>{if(drawing)paint(n,drawMode)});
+    cell.addEventListener('click',()=>{if(suppressClick){suppressClick=false;return}paint(n,!excluded.has(n));update()});
+    grid.append(cell);
+   }
+  }
+  board.append(grid);
+  host.append(board);
+ }
+ if(count===0){
+  const empty=document.createElement('div');
+  empty.style.cssText='grid-column:1/-1;text-align:center;padding:35px 12px;background:#fffefa;border-radius:16px;font-weight:900;color:#59478e;font-size:18px';
+  empty.textContent='Alle Seiten sind ausgeblendet. Tippe oben auf „Alle Seiten zeigen“, um weiterzumachen.';
+  host.append(empty);
+ }
+ update();
+}
+window.addEventListener('pointerup',()=>{if(drawing){drawing=false;touched.clear();update()}});
+window.addEventListener('pointercancel',()=>{drawing=false;touched.clear();update()});
+$('reset').onclick=()=>{excluded.clear();hiddenPages.clear();showingFinal=false;$('final').classList.remove('show');render()};
+$('showpages').onclick=()=>{hiddenPages.clear();render()};
+$('shownumbers').onclick=()=>{excluded.clear();render()};
+$('yes').onclick=()=>{$('reply').textContent='Juhuuu! Ihr habt die geheime Zahl gefunden! 🏆'};
+$('no').onclick=()=>{$('reply').textContent='Dann knobelt weiter und prüft eure Zahlen! 💪';$('final').classList.remove('show')};
+render();
+})();
+</script>
+</body>
+</html>
